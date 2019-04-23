@@ -1,30 +1,37 @@
 # WPloadbalanced-Docker
 To launch the project :
 ```bash
-docker-compose up -d --scale frontweb=2 --scale wordpress=2
+docker-compose up -d --scale front-web=2 --scale systm-wps=2 
 ```
 
 Should return :
 ```bassh
-Creating network "wploadbalanced-docker_back-tier" with driver "bridge"
-Creating network "wploadbalanced-docker_admin-tier" with driver "bridge"
-Creating network "wploadbalanced-docker_front-tier" with driver "bridge"
-Creating wploadbalanced-docker_db_1 ... done
-Creating wploadbalanced-docker_adminer_1   ... done
-Creating wploadbalanced-docker_wordpress_1 ... done
-Creating wploadbalanced-docker_wordpress_2 ... done
-Creating wploadbalanced-docker_lb-admin_1  ... done
-Creating wploadbalanced-docker_frontweb_1  ... done
-Creating wploadbalanced-docker_frontweb_2  ... done
-Creating wploadbalanced-docker_lb_1        ... done
+Creating network "wploadbalanced-docker_back-net" with driver "bridge"
+Creating network "wploadbalanced-docker_admin-net" with driver "bridge"
+Creating network "wploadbalanced-docker_front-net" with driver "bridge"
+Creating wploadbalanced-docker_datab-wps_1 ... done
+Creating wploadbalanced-docker_front-adm_1 ... done
+Creating wploadbalanced-docker_systm-wps_1 ... done
+Creating wploadbalanced-docker_systm-wps_2 ... done
+Creating wploadbalanced-docker_loadb-adm_1 ... done
+Creating wploadbalanced-docker_front-web_1 ... done
+Creating wploadbalanced-docker_front-web_2 ... done
+Creating wploadbalanced-docker_loadb-web_1 ... done
 ```
 
 This `docker-compose.yml` load a fonctionnal load-balanced WP server
 
 Name |Service | int port | exp port | depends |
 -|-|-|-|-|
-db | Mariadb | 3306 | 3306 | `[]`|
-adminer | Adminer | 8080 | 8080 | `[db]`|
-frontweb | Wordpress | 80 | 32772+ | `[db]` |
-lb | HAProxy | 80 | 80 | `[frontweb]` |
+datab-wps | Mariadb | 3306 | / | `[]`|
+systm-wps | Wordpress | 9000 | / | `[db]` |
+front-adm | Adminer | 8080 | / | `[db]`|
+front-web | Wordpress | 9000 | / | `[db, systm-wps]` |
+loadb-adm | HAProxy | 8080 | 8080, 443 | `[db, front-adm]` |
+loadb-web | HAProxy | 80, 443 | 80, 443 | `[db, systm-wps, front-web]` |
 
+Network | Services |
+-|-|
+back-net | datab-wps, systm-wps, front-adm, front-web |
+admin-net | front-adm, loadb-adm |
+front-net | front-web, loadb-web |
