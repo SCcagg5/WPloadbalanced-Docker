@@ -6,7 +6,11 @@ docker-compose up -d --scale frontweb=2
 
 Should return :
 ```bassh
-
+Creating wploadbalanced-docker_frontweb_1 ... done
+Creating wploadbalanced-docker_frontweb_2 ... done
+Creating wploadbalanced-docker_lb_1       ... done
+Creating wploadbalanced-docker_db_1       ... done
+Creating wploadbalanced-docker_adminer_1  ... done
 ```
 
 This `docker-compose.yml` load a fonctionnal load-balanced WP server
