@@ -8,7 +8,7 @@ networks:
      driver: bridge
 
 services:
-   frontweb:
+   front-web:
        image: nginx:latest
        ports:
        - '80'
@@ -18,13 +18,13 @@ services:
          - ./logs/nginx:/var/log/nginx
          - ./wordpress:/var/www/html
        depends_on:
-         - wordpress
+         - systm-wps
        restart: always
        networks:
          - back-tier
          - front-tier
 
-   db:
+   datab-wps:
      image: mariadb
      restart: always
      environment:
@@ -37,27 +37,27 @@ services:
      networks:
        - back-tier
 
-   adminer:
+   front-adm:
      image: adminer
      restart: always
      depends_on:
-       - db
+       - datab-wps
      ports:
        - 8080
      networks:
        - back-tier
        - admin-tier
               
-   wordpress:
+   systm-wps:
      image: wordpress:php7.2-fpm
      ports:
        - 9000
      networks:
        - back-tier
      depends_on:
-       - db
+       - datab-wps
      links:
-       - db
+       - datab-wps
      restart: always
      volumes:
        - ./wordpress:/var/www/html
@@ -67,24 +67,24 @@ services:
        WORDPRESS_DB_PASSWORD: wordpress
        WORDPRESS_DB_NAME: wordpress
 
-   lb:
+   loadb-web:
      image: dockercloud/haproxy
      ports:
        - 80:80
        - 443:443
      links:
-       - frontweb
+       - front-web
      networks:
        - front-tier
      volumes:
        - /var/run/docker.sock:/var/run/docker.sock
 
-   lb-admin:
+   loadb-adm:
     image: dockercloud/haproxy
     ports:
       - 8080:80
     links:
-      - adminer
+      - front-adm
     networks:
       - admin-tier
     volumes:
