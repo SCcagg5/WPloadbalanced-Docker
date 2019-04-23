@@ -13,27 +13,28 @@ services:
      restart: always
      ports:
        - 3306
+     networks:
+       - back-net
+     volumes:
+       - ./db_data:/var/lib/mysql 
      environment:
        MYSQL_ROOT_PASSWORD: example
        MYSQL_DATABASE: wordpress
        MYSQL_USER: wordpress
        MYSQL_PASSWORD: wordpress
-     volumes:
-       - ./db_data:/var/lib/mysql
-     networks:
-       - back-net
+      
    
    systm-wps:
      image: wordpress:php7.2-fpm
+     restart: always
      ports:
        - 9000
-     networks:
-       - back-net
      depends_on:
        - datab-wps
      links:
        - datab-wps
-     restart: always
+     networks:
+       - back-net
      volumes:
        - ./wordpress:/var/www/html
      environment:
@@ -45,51 +46,54 @@ services:
    front-adm:
      image: adminer
      restart: always
-     depends_on:
-       - datab-wps
      ports:
        - 8080
+     depends_on:
+       - datab-wps
      networks:
        - back-net
        - admin-net
    
    front-web:
      image: nginx:latest
+     restart: always
      ports:
      - '80'
+     depends_on:
+       - systm-wps
+     networks:
+       - back-net
+       - front-net
      volumes:
        - ./nginx:/etc/nginx/conf.d
        - ./nginx.conf:/etc/nginx/nginx.conf
        - ./logs/nginx:/var/log/nginx
        - ./wordpress:/var/www/html
-     depends_on:
-       - systm-wps
-     restart: always
-     networks:
-       - back-net
-       - front-net
 
    loadb-web:
      image: dockercloud/haproxy
+     restart: always
      ports:
        - 80:80
        - 443:443
+     depends_on:
+       - front-web
      links:
        - front-web
      networks:
        - front-net
-     depends_on:
-       - front-web
+     
      volumes:
        - /var/run/docker.sock:/var/run/docker.sock
 
    loadb-adm:
      image: dockercloud/haproxy
+     restart: always
      ports:
        - 8080:80
-     links:
-       - front-adm
      depends_on:
+       - front-adm 
+     links:
        - front-adm
      networks:
        - admin-net
