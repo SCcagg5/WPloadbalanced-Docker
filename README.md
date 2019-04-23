@@ -32,6 +32,6 @@ loadb-web | HAProxy | `[80, 443]` | `[80, 443]` | `[db, systm-wps, front-web]` |
 
 Network | Services | Purpose |
 -|-|-|
-back-net | datab-wps, systm-wps, front-adm, front-web | network beetwin all back's services |
+back-net | datab-wps, systm-wps, front-adm, front-web | network between all back's services |
 admin-net | front-adm, loadb-adm | expose adm web `:8080` |
 front-net | front-web, loadb-web | expose usr web `:80, :443` |
