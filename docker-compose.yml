@@ -11,6 +11,8 @@ services:
    datab-wps:
      image: mariadb
      restart: always
+     ports:
+       - 3306
      environment:
        MYSQL_ROOT_PASSWORD: example
        MYSQL_DATABASE: wordpress
@@ -76,6 +78,8 @@ services:
        - front-web
      networks:
        - front-net
+     depends_on:
+       - front-web
      volumes:
        - /var/run/docker.sock:/var/run/docker.sock
 
@@ -84,6 +88,8 @@ services:
      ports:
        - 8080:80
      links:
+       - front-adm
+     depends_on:
        - front-adm
      networks:
        - admin-net
