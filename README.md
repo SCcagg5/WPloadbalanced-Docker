@@ -1,16 +1,22 @@
 # WPloadbalanced-Docker
 To launch the project :
 ```bash
-docker-compose up -d --scale frontweb=2
+docker-compose up -d --scale frontweb=2 --scale wordpress=2
 ```
 
 Should return :
 ```bassh
-Creating wploadbalanced-docker_frontweb_1 ... done
-Creating wploadbalanced-docker_frontweb_2 ... done
-Creating wploadbalanced-docker_lb_1       ... done
-Creating wploadbalanced-docker_db_1       ... done
-Creating wploadbalanced-docker_adminer_1  ... done
+Creating network "wploadbalanced-docker_back-tier" with driver "bridge"
+Creating network "wploadbalanced-docker_admin-tier" with driver "bridge"
+Creating network "wploadbalanced-docker_front-tier" with driver "bridge"
+Creating wploadbalanced-docker_db_1 ... done
+Creating wploadbalanced-docker_adminer_1   ... done
+Creating wploadbalanced-docker_wordpress_1 ... done
+Creating wploadbalanced-docker_wordpress_2 ... done
+Creating wploadbalanced-docker_lb-admin_1  ... done
+Creating wploadbalanced-docker_frontweb_1  ... done
+Creating wploadbalanced-docker_frontweb_2  ... done
+Creating wploadbalanced-docker_lb_1        ... done
 ```
 
 This `docker-compose.yml` load a fonctionnal load-balanced WP server
