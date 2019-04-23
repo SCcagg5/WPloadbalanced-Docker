@@ -1,7 +1,14 @@
 # WPloadbalanced-Docker
-
+To launch the project :
 ```bash
 docker-compose up -d
+```
+
+Should return :
+```bassh
+Creating wploadbalanced-docker_db_1    ... done
+Creating wploadbalanced-docker_adminer_1 ... done
+Creating wploadbalanced-docker_wordpress_1 ... done
 ```
 
 This `docker-compose.yml` load a fonctionnal load-balanced WP server
