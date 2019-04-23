@@ -23,12 +23,12 @@ This `docker-compose.yml` load a fonctionnal load-balanced WP server
 
 Name |Service | int port | exp port | depends |
 -|-|-|-|-|
-datab-wps | Mariadb | 3306 | / | `[]`|
-systm-wps | Wordpress | 9000 | / | `[db]` |
-front-adm | Adminer | 8080 | / | `[db]`|
-front-web | Wordpress | 9000 | / | `[db, systm-wps]` |
-loadb-adm | HAProxy | 8080 | 8080, 443 | `[db, front-adm]` |
-loadb-web | HAProxy | 80, 443 | 80, 443 | `[db, systm-wps, front-web]` |
+datab-wps | Mariadb | `[3306]` | `[]` | `[]`|
+systm-wps | Wordpress | `[9000]` | `[]` | `[db]` |
+front-adm | Adminer | `[8080]` | `[]` | `[db]`|
+front-web | Wordpress | `[9000]` | `[]` | `[db, systm-wps]` |
+loadb-adm | HAProxy | `[8080]` | `[8080, 443]` | `[db, front-adm]` |
+loadb-web | HAProxy | `[80, 443]` | `[80, 443]` | `[db, systm-wps, front-web]` |
 
 Network | Services | Purpose |
 -|-|-|
