@@ -4,9 +4,26 @@ networks:
      driver: bridge
    front-tier:
      driver: bridge
-
+   admin-tier:
+     driver: bridge
 
 services:
+   frontweb:
+       image: nginx:latest
+       ports:
+       - '80'
+       volumes:
+         - ./nginx:/etc/nginx/conf.d
+         - ./nginx.conf:/etc/nginx/nginx.conf
+         - ./logs/nginx:/var/log/nginx
+         - ./wordpress:/var/www/html
+       depends_on:
+         - wordpress
+       restart: always
+       networks:
+         - back-tier
+         - front-tier
+
    db:
      image: mariadb
      restart: always
@@ -15,27 +32,35 @@ services:
        MYSQL_DATABASE: wordpress
        MYSQL_USER: wordpress
        MYSQL_PASSWORD: wordpress
-     links:
-       - frontweb
+     volumes:
+       - ./db_data:/var/lib/mysql
      networks:
        - back-tier
 
    adminer:
      image: adminer
      restart: always
-     links:
+     depends_on:
        - db
      ports:
-       - 8080:8080
-              
-   frontweb:
-     image: wordpress:latest
-     ports:
-       - 80
+       - 8080
      networks:
        - back-tier
-       - front-tier
+       - admin-tier
+              
+   wordpress:
+     image: wordpress:php7.2-fpm
+     ports:
+       - 9000
+     networks:
+       - back-tier
+     depends_on:
+       - db
+     links:
+       - db
      restart: always
+     volumes:
+       - ./wordpress:/var/www/html
      environment:
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: wordpress
@@ -46,13 +71,21 @@ services:
      image: dockercloud/haproxy
      ports:
        - 80:80
+       - 443:443
      links:
        - frontweb
      networks:
        - front-tier
-       - back-tier
      volumes:
        - /var/run/docker.sock:/var/run/docker.sock
 
-volumes:
-   db_data: {}
+   lb-admin:
+    image: dockercloud/haproxy
+    ports:
+      - 8080:80
+    links:
+      - adminer
+    networks:
+      - admin-tier
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
