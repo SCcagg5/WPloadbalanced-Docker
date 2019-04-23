@@ -30,8 +30,8 @@ front-web | Wordpress | 9000 | / | `[db, systm-wps]` |
 loadb-adm | HAProxy | 8080 | 8080, 443 | `[db, front-adm]` |
 loadb-web | HAProxy | 80, 443 | 80, 443 | `[db, systm-wps, front-web]` |
 
-Network | Services |
--|-|
-back-net | datab-wps, systm-wps, front-adm, front-web |
-admin-net | front-adm, loadb-adm |
-front-net | front-web, loadb-web |
+Network | Services | Purpose |
+-|-|-|
+back-net | datab-wps, systm-wps, front-adm, front-web | network beetwin all back's services |
+admin-net | front-adm, loadb-adm | expose adm web `:8080` |
+front-net | front-web, loadb-web | expose usr web `:80, :443` |
