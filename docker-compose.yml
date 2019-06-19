@@ -1,4 +1,4 @@
-version: '3.3'
+version: '2'
 networks:
    back-net:
      driver: bridge
@@ -24,17 +24,18 @@ services:
        MYSQL_PASSWORD: wordpress
       
    
-   systm-wps:
-     image: wordpress:php7.2-fpm
+   front-web:
+     image: wordpress:latest
      restart: always
      ports:
-       - 9000
+       - 80
      depends_on:
        - datab-wps
      links:
        - datab-wps
      networks:
        - back-net
+       - front-net
      volumes:
        - ./wordpress:/var/www/html
      environment:
@@ -53,29 +54,12 @@ services:
      networks:
        - back-net
        - admin-net
-   
-   front-web:
-     image: nginx:latest
-     restart: always
-     ports:
-     - '80'
-     depends_on:
-       - systm-wps
-     networks:
-       - back-net
-       - front-net
-     volumes:
-       - ./nginx:/etc/nginx/conf.d
-       - ./nginx.conf:/etc/nginx/nginx.conf
-       - ./logs/nginx:/var/log/nginx
-       - ./wordpress:/var/www/html
 
    loadb-web:
      image: dockercloud/haproxy
      restart: always
      ports:
-       - 80:80
-       - 443:443
+       - 8080:80
      depends_on:
        - front-web
      links:
@@ -90,7 +74,7 @@ services:
      image: dockercloud/haproxy
      restart: always
      ports:
-       - 8080:80
+       - 8081:80
      depends_on:
        - front-adm 
      links:
